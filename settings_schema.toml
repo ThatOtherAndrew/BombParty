@@ -1,0 +1,5 @@
+# The number of lives each player starts with
+starting_lives = 3
+
+# The duration, each player has to answer the prompt, in seconds
+bomb_timer = 10

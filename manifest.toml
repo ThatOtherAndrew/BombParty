@@ -1,0 +1,16 @@
+manifest_version = 1
+
+[module]
+name = "BombParty"
+id = "bombparty"
+description = "A Discord implementation of the BombParty word game."
+version = "1.0.0"
+license = "GNU GPLv3"
+authors = ["ThatOtherAndrew"]
+permissions = [
+    "read_messages",
+    "send_messages",
+    "embed_links",
+    "create_private_threads",
+    "manage_threads"
+]
