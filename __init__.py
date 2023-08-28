@@ -26,7 +26,7 @@ class Lobby(discord.ui.View):
     @discord.ui.button(label='Join Game', style=discord.ButtonStyle.blurple, emoji='⤵', custom_id='bombparty:join_game')
     async def join_game(self, interaction: discord.Interaction, _):
         if interaction.user in self.players:
-            await interaction.response.send_message('You\'ve already joined the game!', ephemeral=True)
+            await interaction.response.send_message("You've already joined the game!", ephemeral=True)
             return
 
         self.players.append(interaction.user)
@@ -41,7 +41,7 @@ class Lobby(discord.ui.View):
     @discord.ui.button(label='Leave Game', style=discord.ButtonStyle.grey, emoji='⤴', custom_id='bombparty:leave_game')
     async def leave_game(self, interaction: discord.Interaction, _):
         if interaction.user not in self.players:
-            await interaction.response.send_message('You\'re not in the game!', ephemeral=True)
+            await interaction.response.send_message("You're not in the game!", ephemeral=True)
             return
 
         self.players.remove(interaction.user)
@@ -54,36 +54,36 @@ class Lobby(discord.ui.View):
             embed = discord.Embed(title='BombParty Game Ended', description='All players have left this game.')
             await interaction.response.edit_message(embed=embed, view=None)
             self.stop()
+            return
 
+        embed = interaction.message.embeds[0]
+        embed.title = f'BombParty Game Lobby ({len(self.players)})'
+
+        if interaction.user == self.leader:
+            self.leader = self.players[0]
+            await self.thread.send(
+                f'> ⤴ {interaction.user.mention}, the game leader, left the game.\n'
+                f'> 👑 {self.leader.mention} has been automatically promoted to game leader.',
+                allowed_mentions=discord.AllowedMentions(users=[self.leader])
+            )
+            embed.set_footer(
+                text=f'{self.leader.display_name} is the current game leader.',
+                icon_url=self.leader.display_avatar.url
+            )
         else:
-            embed = interaction.message.embeds[0]
-            embed.title = f'BombParty Game Lobby ({len(self.players)})'
-
-            if interaction.user == self.leader:
-                self.leader = self.players[0]
-                await self.thread.send(
-                    f'> ⤴ {interaction.user.mention}, the game leader, left the game.\n'
-                    f'> 👑 {self.leader.mention} has been automatically promoted to game leader.',
-                    allowed_mentions=discord.AllowedMentions(users=[self.leader])
-                )
-                embed.set_footer(
-                    text=f'{self.leader.display_name} is the current game leader.',
-                    icon_url=self.leader.display_avatar.url
-                )
-            else:
-                await self.thread.send(
-                    f'> ⤴ {interaction.user.mention} left the game.',
-                    allowed_mentions=discord.AllowedMentions.none()
-                )
-            if len(self.players) == 1:
-                discord.utils.get(self.children, custom_id='bombparty:start_game').disabled = True
-            await interaction.response.edit_message(embed=embed, view=self)
+            await self.thread.send(
+                f'> ⤴ {interaction.user.mention} left the game.',
+                allowed_mentions=discord.AllowedMentions.none()
+            )
+        if len(self.players) == 1:
+            discord.utils.get(self.children, custom_id='bombparty:start_game').disabled = True
+        await interaction.response.edit_message(embed=embed, view=self)
 
     @discord.ui.button(label='Start Game', style=discord.ButtonStyle.green, emoji='▶',
                        disabled=True, custom_id='bombparty:start_game')
     async def start_game(self, interaction: discord.Interaction, _):
         if interaction.user != self.leader:
-            await interaction.response.send_message('You\'re not the game leader!', ephemeral=True)
+            await interaction.response.send_message("You're not the game leader!", ephemeral=True)
             return
 
         embed = discord.Embed(
